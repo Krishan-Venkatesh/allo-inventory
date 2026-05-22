@@ -21,7 +21,7 @@ https://allo-inventory-edb6x3uyt-krishan-v-naikmasurs-projects.vercel.app
 - Reservation cancellation flow
 - Concurrency-safe stock locking
 - Prevention of overselling
-- Real-time stock updates
+- Near real-time stock updates
 - Production deployment on Vercel
 
 ---

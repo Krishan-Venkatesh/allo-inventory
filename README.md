@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Allo Inventory Reservation System
 
-## Getting Started
+A full-stack inventory reservation system built with Next.js, TypeScript, Prisma, PostgreSQL, and Redis.  
+Users can reserve inventory for a limited duration, confirm purchases, or release reservations while ensuring concurrency-safe stock handling.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Live Demo
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+https://allo-inventory-edb6x3uyt-krishan-v-naikmasurs-projects.vercel.app
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Features
 
-## Learn More
+- Product inventory listing
+- Warehouse-wise stock availability
+- Inventory reservation system
+- 10-minute reservation expiry
+- Reservation confirmation flow
+- Reservation cancellation flow
+- Concurrency-safe stock locking
+- Prevention of overselling
+- Real-time stock updates
+- Production deployment on Vercel
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Frontend
+- Next.js 16
+- React
+- TypeScript
+- Tailwind CSS
 
-## Deploy on Vercel
+### Backend
+- Next.js Route Handlers
+- Prisma ORM
+- PostgreSQL (Neon)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Caching / Idempotency
+- Redis (Upstash)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Deployment
+- Vercel
+
+---
+
+## Architecture
+
+The system uses a reservation-based inventory model.
+
+### Reservation Flow
+
+1. User selects a product and warehouse
+2. Backend creates a reservation
+3. Stock is temporarily held for 10 minutes
+4. User can:
+   - Confirm purchase
+   - Cancel reservation
+   - Let reservation expire automatically
+
+### Concurrency Handling
+
+To prevent overselling during simultaneous reservations, the system uses:
+
+- PostgreSQL transactions
+- `SELECT FOR UPDATE` row locking
+- Atomic stock updates
+
+This guarantees that only available stock can be reserved even under concurrent requests.
+
+---
+
+## Database Models
+
+### Product
+Stores product details.
+
+### Warehouse
+Stores warehouse information.
+
+### InventoryStock
+Tracks stock availability and reserved units.
+
+### Reservation
+Tracks reservation lifecycle:
+- PENDING
+- CONFIRMED
+- RELEASED
+
+### IdempotencyRecord
+Prevents duplicate reservation creation.
+
+---
+
+## API Routes
+
+### Products
+
+```http
+GET /api/products
